@@ -15,9 +15,9 @@ $guests_list_table = new EIM_Guests_List_Table();
 ?>
 
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php _e( 'Guests', 'eim' ); ?></h1>
-    <a href="<?php echo admin_url( 'admin.php?page=event-invitations-manager-guests&action=add' ); ?>" class="page-title-action"><?php _e( 'Add New', 'eim' ); ?></a>
-    <a href="<?php echo admin_url( 'admin.php?page=event-invitations-manager-guests&action=import' ); ?>" class="page-title-action"><?php _e( 'Import Guests', 'eim' ); ?></a>
+    <h1 class="wp-heading-inline">المدعوون</h1>
+    <a href="<?php echo admin_url( 'admin.php?page=event-invitations-manager-guests&action=add' ); ?>" class="page-title-action">أضف جديد</a>
+    <a href="<?php echo admin_url( 'admin.php?page=event-invitations-manager-guests&action=import' ); ?>" class="page-title-action">استيراد المدعوين</a>
     <hr class="wp-header-end">
 
     <?php

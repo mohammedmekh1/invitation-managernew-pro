@@ -73,10 +73,10 @@ $rsvp_done = $guest && $guest->rsvp_status !== 'pending';
 
         <!-- RSVP Card -->
         <div class="card">
-            <h3><?php _e('Will you be attending?', 'eim'); ?></h3>
+            <h3>هل ستحضر؟</h3>
             <div class="icon-group" id="rsvp-buttons">
-                <span class="icon <?php if($rsvp_done) echo 'disabled'; ?>" data-rsvp="attending" title="Attending" style="color: #006A4E; font-size: 2em;">✔️</span>
-                <span class="icon <?php if($rsvp_done) echo 'disabled'; ?>" data-rsvp="not_attending" title="Not Attending" style="color: #006A4E; font-size: 2em;">❌</span>
+                <span class="icon <?php if($rsvp_done) echo 'disabled'; ?>" data-rsvp="attending" title="حاضر" style="color: #006A4E; font-size: 2em;">✔️</span>
+                <span class="icon <?php if($rsvp_done) echo 'disabled'; ?>" data-rsvp="not_attending" title="معتذر" style="color: #006A4E; font-size: 2em;">❌</span>
             </div>
             <p id="rsvp-message" style="display:none;"></p>
         </div>
@@ -84,28 +84,28 @@ $rsvp_done = $guest && $guest->rsvp_status !== 'pending';
         <!-- Info Card -->
         <div class="card">
             <div class="icon-group">
-                <span class="icon info-toggle" data-target="#venue-info">📍 <?php _e('Venue', 'eim'); ?></span>
-                <span class="icon info-toggle" data-target="#time-info">⏰ <?php _e('Time', 'eim'); ?></span>
-                <span class="icon info-toggle" data-target="#location-info">🗺️ <?php _e('Location', 'eim'); ?></span>
+                <span class="icon info-toggle" data-target="#venue-info">📍 المكان</span>
+                <span class="icon info-toggle" data-target="#time-info">⏰ الموعد</span>
+                <span class="icon info-toggle" data-target="#location-info">🗺️ الموقع</span>
             </div>
             <div id="venue-info" class="icon-info"><?php echo esc_html($occasion->venue_details); ?></div>
             <div id="time-info" class="icon-info"><?php echo esc_html($occasion->time_details); ?></div>
-            <div id="location-info" class="icon-info"><a href="<?php echo esc_url($occasion->location_details); ?>" target="_blank"><?php _e('View on Map', 'eim'); ?></a></div>
+            <div id="location-info" class="icon-info"><a href="<?php echo esc_url($occasion->location_details); ?>" target="_blank">عرض على الخريطة</a></div>
         </div>
 
         <!-- Greetings Card -->
         <div class="card greetings-form">
-            <h3><?php _e('Leave a Greeting', 'eim'); ?></h3>
+            <h3>اترك تهنئة</h3>
             <form id="greeting-form">
-                <input type="text" id="greeting-author" placeholder="<?php _e('Your Name', 'eim'); ?>" required><br><br>
-                <textarea id="greeting-message" rows="4" placeholder="<?php _e('Your message...', 'eim'); ?>" required></textarea><br><br>
-                <button type="submit"><?php _e('Send Greeting', 'eim'); ?></button>
+                <input type="text" id="greeting-author" placeholder="اسمك" required><br><br>
+                <textarea id="greeting-message" rows="4" placeholder="رسالتك..." required></textarea><br><br>
+                <button type="submit">إرسال التهنئة</button>
             </form>
         </div>
 
         <!-- Greetings Display -->
         <div class="card greetings-list">
-            <h3><?php _e('Latest Greetings', 'eim'); ?></h3>
+            <h3>آخر التهاني</h3>
             <div id="greetings-container">
                 <?php foreach ( $greetings as $greeting ) : ?>
                     <div class="greeting">

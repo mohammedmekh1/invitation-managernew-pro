@@ -44,7 +44,7 @@ if ( isset( $_POST['submit'] ) && check_admin_referer( 'eim_save_guest_action', 
 
     if ( $is_edit_mode ) {
         $wpdb->update( $table_guests, $item, array( 'id' => $guest_id ) );
-        $message = __( 'Guest updated successfully!', 'eim' );
+        $message = 'تم تحديث المدعو بنجاح!';
     } else {
         // Insert first to get an ID
         $wpdb->insert( $table_guests, $item );
@@ -55,7 +55,7 @@ if ( isset( $_POST['submit'] ) && check_admin_referer( 'eim_save_guest_action', 
         $wpdb->update( $table_guests, array( 'unique_code' => $unique_code ), array( 'id' => $new_guest_id ) );
 
         $guest_id = $new_guest_id;
-        $message = __( 'Guest added successfully!', 'eim' );
+        $message = 'تمت إضافة المدعو بنجاح!';
     }
 
     $notice_class = 'notice-success';
@@ -71,11 +71,11 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
 <?php if ( ! empty( $message ) ) : ?>
     <div class="notice <?php echo esc_attr( $notice_class ); ?> is-dismissible">
         <p><?php echo esc_html( $message ); ?></p>
-        <p><a href="<?php echo admin_url('admin.php?page=event-invitations-manager-guests'); ?>"><?php _e('&larr; Back to Guests List', 'eim'); ?></a></p>
+        <p><a href="<?php echo admin_url('admin.php?page=event-invitations-manager-guests'); ?>">&larr; العودة إلى قائمة المدعوين</a></p>
     </div>
 <?php endif; ?>
 
-<h2><?php echo $is_edit_mode ? __('Edit Guest', 'eim') : __('Add New Guest', 'eim'); ?></h2>
+<h2><?php echo $is_edit_mode ? 'تعديل مدعو' : 'إضافة مدعو جديد'; ?></h2>
 
 <form method="post">
     <input type="hidden" name="guest_id" value="<?php echo $guest_id; ?>">
@@ -84,14 +84,14 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
     <table class="form-table">
         <tbody>
             <tr>
-                <th scope="row"><label for="name"><?php _e( 'Guest Name', 'eim' ); ?></label></th>
+                <th scope="row"><label for="name">اسم المدعو</label></th>
                 <td><input type="text" name="name" id="name" value="<?php echo esc_attr( $guest['name'] ); ?>" class="regular-text" required></td>
             </tr>
             <tr>
-                <th scope="row"><label for="occasion_id"><?php _e( 'Occasion', 'eim' ); ?></label></th>
+                <th scope="row"><label for="occasion_id">المناسبة</label></th>
                 <td>
                     <select name="occasion_id" id="occasion_id" required>
-                        <option value=""><?php _e( 'Select an Occasion', 'eim' ); ?></option>
+                        <option value="">اختر مناسبة</option>
                         <?php foreach ( $occasions as $occasion ) : ?>
                             <option value="<?php echo esc_attr( $occasion->id ); ?>" <?php selected( $guest['occasion_id'], $occasion->id ); ?>>
                                 <?php echo esc_html( $occasion->name ); ?>
@@ -103,5 +103,5 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
         </tbody>
     </table>
 
-    <?php submit_button( $is_edit_mode ? __( 'Update Guest', 'eim' ) : __( 'Add Guest', 'eim' ) ); ?>
+    <?php submit_button( $is_edit_mode ? 'تحديث مدعو' : 'إضافة مدعو' ); ?>
 </form>

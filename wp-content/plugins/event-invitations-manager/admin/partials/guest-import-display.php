@@ -22,7 +22,7 @@ if ( isset( $_POST['eim_import_nonce'] ) && wp_verify_nonce( $_POST['eim_import_
 
         $occasion_id = absint($_POST['occasion_id']);
         if ( empty($occasion_id) ) {
-            $message = 'Please select an occasion.';
+            $message = 'الرجاء اختيار مناسبة.';
             $notice_class = 'notice-error';
         } else {
             $file = $_FILES['guest_csv'];
@@ -47,15 +47,15 @@ if ( isset( $_POST['eim_import_nonce'] ) && wp_verify_nonce( $_POST['eim_import_
                     }
                 }
                 fclose($csv_file);
-                $message = "Successfully imported " . $imported_count . " guests.";
+                $message = "تم استيراد " . $imported_count . " مدعو بنجاح.";
                 $notice_class = 'notice-success';
             } else {
-                $message = 'Please upload a valid CSV file.';
+                $message = 'الرجاء رفع ملف CSV صالح.';
                 $notice_class = 'notice-error';
             }
         }
     } else {
-        $message = 'File upload error. Please try again.';
+        $message = 'خطأ في رفع الملف. الرجاء المحاولة مرة أخرى.';
         $notice_class = 'notice-error';
     }
 }
@@ -69,9 +69,9 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
     </div>
 <?php endif; ?>
 
-<h2><?php _e('Import Guests from CSV', 'eim'); ?></h2>
+<h2>استيراد المدعوين من ملف CSV</h2>
 
-<p><?php _e('Upload a CSV file with guest names. The file should have one column: <strong>Name</strong>. The first row will be treated as a header and skipped.', 'eim'); ?></p>
+<p>ارفع ملف CSV بأسماء المدعوين. يجب أن يحتوي الملف على عمود واحد: <strong>الاسم</strong>. سيتم التعامل مع الصف الأول كعنوان ويتم تخطيه.</p>
 
 <form method="post" enctype="multipart/form-data">
     <?php wp_nonce_field( 'eim_import_action', 'eim_import_nonce' ); ?>
@@ -79,10 +79,10 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
     <table class="form-table">
         <tbody>
             <tr>
-                <th scope="row"><label for="occasion_id"><?php _e( 'Import to Occasion', 'eim' ); ?></label></th>
+                <th scope="row"><label for="occasion_id">استيراد إلى مناسبة</label></th>
                 <td>
                     <select name="occasion_id" id="occasion_id" required>
-                        <option value=""><?php _e( 'Select an Occasion', 'eim' ); ?></option>
+                        <option value="">اختر مناسبة</option>
                         <?php foreach ( $occasions as $occasion ) : ?>
                             <option value="<?php echo esc_attr( $occasion->id ); ?>"><?php echo esc_html( $occasion->name ); ?></option>
                         <?php endforeach; ?>
@@ -90,11 +90,11 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
                 </td>
             </tr>
             <tr>
-                <th scope="row"><label for="guest_csv"><?php _e( 'CSV File', 'eim' ); ?></label></th>
+                <th scope="row"><label for="guest_csv">ملف CSV</label></th>
                 <td><input type="file" name="guest_csv" id="guest_csv" accept=".csv" required></td>
             </tr>
         </tbody>
     </table>
 
-    <?php submit_button( __( 'Import Guests', 'eim' ) ); ?>
+    <?php submit_button( 'استيراد المدعوين' ); ?>
 </form>

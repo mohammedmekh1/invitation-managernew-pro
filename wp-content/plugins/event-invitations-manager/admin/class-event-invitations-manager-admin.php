@@ -80,6 +80,9 @@ class Event_Invitations_Manager_Admin {
             wp_enqueue_media();
         }
 
+        // Enqueue a general admin script for all our pages
+        wp_enqueue_script( $this->plugin_name . '-admin', plugin_dir_url( __FILE__ ) . '../assets/js/admin-script.js', array( 'jquery' ), $this->version, true );
+
         // Enqueue scanner scripts for the scan page
         if ( $hook === 'invitations_page_event-invitations-manager-scan' ) {
             wp_enqueue_script('jsqr', 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js', array(), '1.4.0', true);
@@ -102,8 +105,8 @@ class Event_Invitations_Manager_Admin {
     public function add_menu() {
         // Add main menu page
         add_menu_page(
-            __( 'Event Invitations', 'event-invitations-manager' ),
-            __( 'Invitations', 'event-invitations-manager' ),
+            'دعوات المناسبات',
+            'الدعوات',
             'manage_options',
             $this->plugin_name,
             array( $this, 'display_occasions_page' ),
@@ -114,8 +117,8 @@ class Event_Invitations_Manager_Admin {
         // Add sub-menu page for Occasions
         add_submenu_page(
             $this->plugin_name,
-            __( 'Occasions', 'event-invitations-manager' ),
-            __( 'Occasions', 'event-invitations-manager' ),
+            'المناسبات',
+            'المناسبات',
             'manage_options',
             $this->plugin_name, // This makes it the default page
             array( $this, 'display_occasions_page' )
@@ -124,8 +127,8 @@ class Event_Invitations_Manager_Admin {
         // Add sub-menu page for Guests
         add_submenu_page(
             $this->plugin_name,
-            __( 'Guests', 'event-invitations-manager' ),
-            __( 'Guests', 'event-invitations-manager' ),
+            'المدعوون',
+            'المدعوون',
             'manage_options',
             $this->plugin_name . '-guests',
             array( $this, 'display_guests_page' )
@@ -134,8 +137,8 @@ class Event_Invitations_Manager_Admin {
         // Add sub-menu page for Statistics
         add_submenu_page(
             $this->plugin_name,
-            __( 'Statistics', 'event-invitations-manager' ),
-            __( 'Statistics', 'event-invitations-manager' ),
+            'الإحصائيات',
+            'الإحصائيات',
             'manage_options',
             $this->plugin_name . '-statistics',
             array( $this, 'display_statistics_page' )
@@ -144,8 +147,8 @@ class Event_Invitations_Manager_Admin {
         // Add sub-menu page for Scan QR Code
         add_submenu_page(
             $this->plugin_name,
-            __( 'Scan QR Code', 'event-invitations-manager' ),
-            __( 'Scan QR Code', 'event-invitations-manager' ),
+            'مسح رمز QR',
+            'مسح رمز QR',
             'manage_options',
             $this->plugin_name . '-scan',
             array( $this, 'display_scan_page' )
@@ -154,8 +157,8 @@ class Event_Invitations_Manager_Admin {
         // Add sub-menu page for Settings
         add_submenu_page(
             $this->plugin_name,
-            __( 'Settings', 'event-invitations-manager' ),
-            __( 'Settings', 'event-invitations-manager' ),
+            'الإعدادات',
+            'الإعدادات',
             'manage_options',
             $this->plugin_name . '-settings',
             array( $this, 'display_settings_page' )

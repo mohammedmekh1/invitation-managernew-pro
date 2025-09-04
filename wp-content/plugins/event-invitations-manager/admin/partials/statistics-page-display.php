@@ -28,17 +28,17 @@ $stats = $wpdb->get_results( "
 <div class="wrap">
     <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
-    <p><?php _e( 'Here is a summary of the guest responses for each occasion.', 'eim' ); ?></p>
+    <p>هنا ملخص استجابات المدعوين لكل مناسبة.</p>
 
     <table class="wp-list-table widefat fixed striped">
         <thead>
             <tr>
-                <th scope="col"><?php _e('Occasion', 'eim'); ?></th>
-                <th scope="col"><?php _e('Total Guests', 'eim'); ?></th>
-                <th scope="col"><?php _e('Attending', 'eim'); ?></th>
-                <th scope="col"><?php _e('Not Attending', 'eim'); ?></th>
-                <th scope="col"><?php _e('Pending Response', 'eim'); ?></th>
-                <th scope="col"><?php _e('Guests Checked In', 'eim'); ?></th>
+                <th scope="col">المناسبة</th>
+                <th scope="col">إجمالي المدعوين</th>
+                <th scope="col">حاضر</th>
+                <th scope="col">معتذر</th>
+                <th scope="col">بانتظار الرد</th>
+                <th scope="col">تم تسجيل دخولهم</th>
             </tr>
         </thead>
         <tbody>
@@ -55,7 +55,7 @@ $stats = $wpdb->get_results( "
                 <?php endforeach; ?>
             <?php else : ?>
                 <tr>
-                    <td colspan="6"><?php _e('No occasions found.', 'eim'); ?></td>
+                    <td colspan="6">لم يتم العثور على مناسبات.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

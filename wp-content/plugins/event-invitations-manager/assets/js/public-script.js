@@ -24,24 +24,24 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    var successMsg = 'Thank you for your response!';
+                    var successMsg = 'شكراً لك على استجابتك!';
                     if (response.data.qr_code_url) {
-                        successMsg = 'Thank you! Your QR code is below.';
+                        successMsg = 'شكراً لك! رمز الـ QR الخاص بك بالأسفل.';
                         // Display the QR code
-                        var qrImg = $('<img>').attr('src', response.data.qr_code_url).attr('alt', 'Your QR Code');
+                        var qrImg = $('<img>').attr('src', response.data.qr_code_url).attr('alt', 'رمز QR الخاص بك');
                         $('#qr-code-container').html(qrImg);
                         // Here you would trigger a modal
-                        alert('QR Code generated! You can download it or find it on the page.');
+                        alert('تم إنشاء رمز QR! يمكنك تحميله أو العثور عليه في الصفحة.');
                     }
                     $('#rsvp-message').text(successMsg).show();
                 } else {
-                    $('#rsvp-message').text('An error occurred. Please try again.').show();
+                    $('#rsvp-message').text('حدث خطأ. الرجاء المحاولة مرة أخرى.').show();
                     // Re-enable buttons if something went wrong
                     $('#rsvp-buttons .icon').removeClass('disabled');
                 }
             },
             error: function() {
-                $('#rsvp-message').text('A network error occurred. Please try again.').show();
+                $('#rsvp-message').text('حدث خطأ في الشبكة. الرجاء المحاولة مرة أخرى.').show();
                 $('#rsvp-buttons .icon').removeClass('disabled');
             }
         });

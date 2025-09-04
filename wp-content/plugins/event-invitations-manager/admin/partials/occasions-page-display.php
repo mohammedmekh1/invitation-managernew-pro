@@ -25,8 +25,8 @@ $occasions_list_table = new EIM_Occasions_List_Table();
 ?>
 
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php _e( 'Occasions', 'eim' ); ?></h1>
-    <a href="<?php echo admin_url( 'admin.php?page=event-invitations-manager&action=add' ); ?>" class="page-title-action"><?php _e( 'Add New', 'eim' ); ?></a>
+    <h1 class="wp-heading-inline">المناسبات</h1>
+    <a href="<?php echo admin_url( 'admin.php?page=event-invitations-manager&action=add' ); ?>" class="page-title-action">أضف جديد</a>
     <hr class="wp-header-end">
 
     <?php

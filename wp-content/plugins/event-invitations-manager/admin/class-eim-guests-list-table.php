@@ -8,8 +8,8 @@ class EIM_Guests_List_Table extends WP_List_Table {
 
     public function __construct() {
         parent::__construct( [
-            'singular' => __( 'Guest', 'eim' ),
-            'plural'   => __( 'Guests', 'eim' ),
+            'singular' => 'مدعو',
+            'plural'   => 'المدعوون',
             'ajax'     => false
         ] );
     }
@@ -56,14 +56,14 @@ class EIM_Guests_List_Table extends WP_List_Table {
     }
 
     public function no_items() {
-        _e( 'No guests found.', 'eim' );
+        echo 'لم يتم العثور على مدعوين.';
     }
 
     function column_name( $item ) {
         $title = '<strong>' . $item['name'] . '</strong>';
         $actions = [
-            'edit'   => sprintf( '<a href="?page=%s&action=%s&guest=%d">' . __( 'Edit', 'eim' ) . '</a>', esc_attr( $_REQUEST['page'] ), 'edit', absint( $item['id'] ) ),
-            'delete' => sprintf( '<a href="?page=%s&action=%s&guest=%d&_wpnonce=%s">' . __( 'Delete', 'eim' ) . '</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item['id'] ), wp_create_nonce( 'eim_delete_guest' ) ),
+            'edit'   => sprintf( '<a href="?page=%s&action=%s&guest=%d">تعديل</a>', esc_attr( $_REQUEST['page'] ), 'edit', absint( $item['id'] ) ),
+            'delete' => sprintf( '<a href="?page=%s&action=%s&guest=%d&_wpnonce=%s">حذف</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item['id'] ), wp_create_nonce( 'eim_delete_guest' ) ),
         ];
         return $title . $this->row_actions( $actions );
     }
@@ -76,7 +76,11 @@ class EIM_Guests_List_Table extends WP_List_Table {
                 return $item[ $column_name ];
             case 'unique_code':
                 $invitation_url = home_url( '/invitation/' . $item['unique_code'] . '/' );
-                return '<code>' . $item['unique_code'] . '</code><br/><a href="' . esc_url($invitation_url) . '" target="_blank">View Invitation</a>';
+                $input_id = 'invitation-url-' . $item['id'];
+                $html = '<input type="text" id="' . $input_id . '" value="' . esc_url($invitation_url) . '" readonly style="width: 100%;">';
+                $html .= '<button type="button" class="button button-secondary eim-copy-button" data-target="#' . $input_id . '">Copy</button>';
+                $html .= ' <a href="' . esc_url($invitation_url) . '" target="_blank" class="button button-secondary">View</a>';
+                return $html;
             case 'created_at':
                 return date( 'Y-m-d H:i', strtotime($item[ $column_name ]) );
             default:
@@ -91,12 +95,12 @@ class EIM_Guests_List_Table extends WP_List_Table {
     function get_columns() {
         return [
             'cb'      => '<input type="checkbox" />',
-            'name'    => __( 'Name', 'eim' ),
-            'occasion_name' => __( 'Occasion', 'eim' ),
-            'unique_code' => __( 'Invitation Link', 'eim' ),
-            'rsvp_status' => __( 'RSVP', 'eim' ),
-            'check_in_status' => __( 'Checked In', 'eim' ),
-            'created_at' => __( 'Created At', 'eim' )
+            'name'    => 'الاسم',
+            'occasion_name' => 'المناسبة',
+            'unique_code' => 'رابط الدعوة',
+            'rsvp_status' => 'حالة الحضور',
+            'check_in_status' => 'تم تسجيل الدخول',
+            'created_at' => 'تاريخ الإنشاء'
         ];
     }
 
@@ -109,7 +113,7 @@ class EIM_Guests_List_Table extends WP_List_Table {
     }
 
     public function get_bulk_actions() {
-        return [ 'bulk-delete' => 'Delete' ];
+        return [ 'bulk-delete' => 'حذف' ];
     }
 
     protected function extra_tablenav( $which ) {
@@ -120,12 +124,12 @@ class EIM_Guests_List_Table extends WP_List_Table {
             ?>
             <div class="alignleft actions">
                 <select name="occasion_id">
-                    <option value=""><?php _e('All Occasions', 'eim'); ?></option>
+                    <option value="">كل المناسبات</option>
                     <?php foreach ( $occasions as $occasion ) : ?>
                         <option value="<?php echo $occasion->id; ?>" <?php selected( $current_occasion, $occasion->id ); ?>><?php echo esc_html( $occasion->name ); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <?php submit_button( __( 'Filter' ), 'secondary', 'filter_action', false ); ?>
+                <?php submit_button( 'فرز', 'secondary', 'filter_action', false ); ?>
             </div>
             <?php
         }

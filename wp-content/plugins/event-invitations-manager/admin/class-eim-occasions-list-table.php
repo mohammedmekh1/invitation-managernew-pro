@@ -8,8 +8,8 @@ class EIM_Occasions_List_Table extends WP_List_Table {
 
     public function __construct() {
         parent::__construct( [
-            'singular' => __( 'Occasion', 'eim' ),
-            'plural'   => __( 'Occasions', 'eim' ),
+            'singular' => 'مناسبة',
+            'plural'   => 'المناسبات',
             'ajax'     => false
         ] );
     }
@@ -51,15 +51,15 @@ class EIM_Occasions_List_Table extends WP_List_Table {
     }
 
     public function no_items() {
-        _e( 'No occasions found.', 'eim' );
+        echo 'لم يتم العثور على مناسبات.';
     }
 
     function column_name( $item ) {
         $title = '<strong>' . $item['name'] . '</strong>';
 
         $actions = [
-            'edit'   => sprintf( '<a href="?page=%s&action=%s&occasion=%d">' . __( 'Edit', 'eim' ) . '</a>', esc_attr( $_REQUEST['page'] ), 'edit', absint( $item['id'] ) ),
-            'delete' => sprintf( '<a href="?page=%s&action=%s&occasion=%d&_wpnonce=%s">' . __( 'Delete', 'eim' ) . '</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item['id'] ), wp_create_nonce( 'eim_delete_occasion' ) ),
+            'edit'   => sprintf( '<a href="?page=%s&action=%s&occasion=%d">تعديل</a>', esc_attr( $_REQUEST['page'] ), 'edit', absint( $item['id'] ) ),
+            'delete' => sprintf( '<a href="?page=%s&action=%s&occasion=%d&_wpnonce=%s">حذف</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item['id'] ), wp_create_nonce( 'eim_delete_occasion' ) ),
         ];
 
         return $title . $this->row_actions( $actions );
@@ -85,9 +85,9 @@ class EIM_Occasions_List_Table extends WP_List_Table {
     function get_columns() {
         $columns = [
             'cb'      => '<input type="checkbox" />',
-            'name'    => __( 'Name', 'eim' ),
-            'event_date' => __( 'Event Date', 'eim' ),
-            'created_at' => __( 'Created At', 'eim' )
+            'name'    => 'الاسم',
+            'event_date' => 'تاريخ المناسبة',
+            'created_at' => 'تاريخ الإنشاء'
         ];
 
         return $columns;
@@ -105,7 +105,7 @@ class EIM_Occasions_List_Table extends WP_List_Table {
 
     public function get_bulk_actions() {
         $actions = [
-            'bulk-delete' => 'Delete'
+            'bulk-delete' => 'حذف'
         ];
 
         return $actions;
@@ -132,7 +132,7 @@ class EIM_Occasions_List_Table extends WP_List_Table {
         if ( 'delete' === $this->current_action() ) {
             $nonce = esc_attr( $_REQUEST['_wpnonce'] );
             if ( ! wp_verify_nonce( $nonce, 'eim_delete_occasion' ) ) {
-                die( 'Go get a life script kiddies' );
+                die( 'Security check failed.' );
             }
             else {
                 self::delete_occasion( absint( $_GET['occasion'] ) );
