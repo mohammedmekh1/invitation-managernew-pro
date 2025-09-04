@@ -18,6 +18,7 @@ $guests_list_table = new EIM_Guests_List_Table();
     <h1 class="wp-heading-inline">المدعوون</h1>
     <a href="<?php echo admin_url( 'admin.php?page=event-invitations-manager-guests&action=add' ); ?>" class="page-title-action">أضف جديد</a>
     <a href="<?php echo admin_url( 'admin.php?page=event-invitations-manager-guests&action=import' ); ?>" class="page-title-action">استيراد المدعوين</a>
+    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=event-invitations-manager-guests&action=export_guests' ), 'eim_export_guests_nonce' ) ); ?>" class="page-title-action">تصدير الكل (CSV)</a>
     <hr class="wp-header-end">
 
     <?php

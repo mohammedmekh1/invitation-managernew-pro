@@ -35,15 +35,30 @@ if ( isset( $_POST['eim_import_nonce'] ) && wp_verify_nonce( $_POST['eim_import_
                 // Skip header row
                 fgetcsv($csv_file);
 
+                $send_emails = isset( $_POST['send_email_notification'] );
+                if ( $send_emails ) {
+                    $admin_class = new Event_Invitations_Manager_Admin( 'event-invitations-manager', '1.0.0' );
+                }
+
                 while ( ( $row = fgetcsv( $csv_file ) ) !== FALSE ) {
                     $guest_name = sanitize_text_field( $row[0] );
+                    $guest_email = isset($row[1]) ? sanitize_email( $row[1] ) : '';
+
                     if ( ! empty( $guest_name ) ) {
-                        $item = ['name' => $guest_name, 'occasion_id' => $occasion_id];
+                        $item = [
+                            'name' => $guest_name,
+                            'email' => $guest_email,
+                            'occasion_id' => $occasion_id
+                        ];
                         $wpdb->insert( $table_guests, $item );
                         $new_guest_id = $wpdb->insert_id;
                         $unique_code = eim_generate_unique_code( $guest_name, $new_guest_id );
                         $wpdb->update( $table_guests, array( 'unique_code' => $unique_code ), array( 'id' => $new_guest_id ) );
                         $imported_count++;
+
+                        if ( $send_emails && ! empty( $guest_email ) ) {
+                            $admin_class->send_invitation_email( $new_guest_id );
+                        }
                     }
                 }
                 fclose($csv_file);
@@ -71,7 +86,7 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
 
 <h2>استيراد المدعوين من ملف CSV</h2>
 
-<p>ارفع ملف CSV بأسماء المدعوين. يجب أن يحتوي الملف على عمود واحد: <strong>الاسم</strong>. سيتم التعامل مع الصف الأول كعنوان ويتم تخطيه.</p>
+<p>ارفع ملف CSV بأسماء المدعوين. يجب أن يحتوي الملف على الأعمدة التالية بالترتيب: <strong>الاسم</strong>, <strong>البريد الإلكتروني</strong>. العمود الثاني اختياري. سيتم التعامل مع الصف الأول كعنوان ويتم تخطيه.</p>
 
 <form method="post" enctype="multipart/form-data">
     <?php wp_nonce_field( 'eim_import_action', 'eim_import_nonce' ); ?>
@@ -92,6 +107,11 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
             <tr>
                 <th scope="row"><label for="guest_csv">ملف CSV</label></th>
                 <td><input type="file" name="guest_csv" id="guest_csv" accept=".csv" required></td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="send_email_notification">إرسال بريد إلكتروني</label></th>
+                <td><input type="checkbox" name="send_email_notification" id="send_email_notification" value="1" checked>
+                    <span class="description">إرسال بريد إلكتروني بالدعوة إلى كل مدعو يتم استيراده (إذا كان لديه بريد إلكتروني).</span></td>
             </tr>
         </tbody>
     </table>

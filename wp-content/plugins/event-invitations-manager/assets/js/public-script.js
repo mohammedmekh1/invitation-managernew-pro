@@ -9,9 +9,11 @@ jQuery(document).ready(function($) {
         }
 
         var rsvpStatus = $this.data('rsvp');
+        var plusOne = $('#plus_one_attending').is(':checked') ? '1' : '0';
 
         // Disable all buttons to prevent multiple clicks
         $('#rsvp-buttons .icon').addClass('disabled');
+        $('#plus_one_attending').prop('disabled', true);
 
         $.ajax({
             url: eim_ajax.ajax_url,
@@ -20,17 +22,23 @@ jQuery(document).ready(function($) {
                 action: 'eim_handle_rsvp',
                 nonce: eim_ajax.nonce,
                 guest_id: eim_ajax.guest_id,
-                rsvp_status: rsvpStatus
+                rsvp_status: rsvpStatus,
+                plus_one: plusOne
             },
             success: function(response) {
                 if (response.success) {
                     var successMsg = 'شكراً لك على استجابتك!';
                     if (response.data.qr_code_url) {
                         successMsg = 'شكراً لك! رمز الـ QR الخاص بك بالأسفل.';
-                        // Display the QR code
+                        // Display the QR code with a download link
                         var qrImg = $('<img>').attr('src', response.data.qr_code_url).attr('alt', 'رمز QR الخاص بك');
-                        $('#qr-code-container').html(qrImg);
-                        // Here you would trigger a modal
+                        var downloadLink = $('<a>')
+                            .attr('href', response.data.qr_code_url)
+                            .attr('download', 'invitation-qr-code.png')
+                            .html(qrImg)
+                            .append('<br><button type="button" style="margin-top:10px;">تحميل الرمز</button>');
+                        $('#qr-code-container').html(downloadLink);
+
                         alert('تم إنشاء رمز QR! يمكنك تحميله أو العثور عليه في الصفحة.');
                     }
                     $('#rsvp-message').text(successMsg).show();

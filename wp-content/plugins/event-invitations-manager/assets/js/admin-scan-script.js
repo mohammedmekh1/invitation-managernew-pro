@@ -54,21 +54,23 @@ jQuery(document).ready(function($) {
                 unique_code: code
             },
             success: function(response) {
+                resultDiv.classList.remove('success', 'error');
                 if (response.success) {
-                    resultDiv.style.backgroundColor = '#d4edda';
-                    resultTitle.textContent = 'Success!';
-                    resultMessage.textContent = 'Guest: ' + response.data.guest_name + '. Status: ' + response.data.message;
+                    resultDiv.classList.add('success');
+                    resultTitle.textContent = 'تم بنجاح!';
+                    resultMessage.textContent = 'المدعو: ' + response.data.guest_name + '. الحالة: ' + response.data.message;
                 } else {
-                    resultDiv.style.backgroundColor = '#f8d7da';
-                    resultTitle.textContent = 'Error!';
+                    resultDiv.classList.add('error');
+                    resultTitle.textContent = 'خطأ!';
                     resultMessage.textContent = response.data.message;
                 }
                 resultDiv.style.display = 'block';
             },
             error: function() {
-                resultDiv.style.backgroundColor = '#f8d7da';
-                resultTitle.textContent = 'Error!';
-                resultMessage.textContent = 'A network error occurred.';
+                resultDiv.classList.remove('success', 'error');
+                resultDiv.classList.add('error');
+                resultTitle.textContent = 'خطأ!';
+                resultMessage.textContent = 'حدث خطأ في الشبكة.';
                 resultDiv.style.display = 'block';
             }
         });

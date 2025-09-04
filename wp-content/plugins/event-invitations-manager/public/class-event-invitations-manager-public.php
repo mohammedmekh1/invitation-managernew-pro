@@ -128,11 +128,17 @@ class Event_Invitations_Manager_Public {
 
         $guest_id = intval( $_POST['guest_id'] );
         $rsvp_status = sanitize_text_field( $_POST['rsvp_status'] );
+        $plus_one_attending = isset( $_POST['plus_one'] ) && $_POST['plus_one'] == '1' ? 1 : 0;
+
+        $update_data = array(
+            'rsvp_status' => $rsvp_status,
+            'plus_one_attending' => $plus_one_attending
+        );
 
         // Update the guest's RSVP status
         $wpdb->update(
             $table_name,
-            array( 'rsvp_status' => $rsvp_status ),
+            $update_data,
             array( 'id' => $guest_id )
         );
 

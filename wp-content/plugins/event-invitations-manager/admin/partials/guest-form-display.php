@@ -40,7 +40,9 @@ if ( isset( $_POST['submit'] ) && check_admin_referer( 'eim_save_guest_action', 
 
     $item = array();
     $item['name'] = sanitize_text_field( $_POST['name'] );
+    $item['email'] = sanitize_email( $_POST['email'] );
     $item['occasion_id'] = absint( $_POST['occasion_id'] );
+    $item['plus_one_allowed'] = isset( $_POST['plus_one_allowed'] ) ? 1 : 0;
 
     if ( $is_edit_mode ) {
         $wpdb->update( $table_guests, $item, array( 'id' => $guest_id ) );
@@ -53,6 +55,13 @@ if ( isset( $_POST['submit'] ) && check_admin_referer( 'eim_save_guest_action', 
         // Now generate unique code with the new ID and update the record
         $unique_code = eim_generate_unique_code( $item['name'], $new_guest_id );
         $wpdb->update( $table_guests, array( 'unique_code' => $unique_code ), array( 'id' => $new_guest_id ) );
+
+        // Send email if requested
+        if ( isset( $_POST['send_email_notification'] ) ) {
+            $admin_class = new Event_Invitations_Manager_Admin( 'event-invitations-manager', '1.0.0' );
+            $admin_class->send_invitation_email( $new_guest_id );
+            $message .= ' ' . 'وتم إرسال البريد الإلكتروني.';
+        }
 
         $guest_id = $new_guest_id;
         $message = 'تمت إضافة المدعو بنجاح!';
@@ -88,6 +97,10 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
                 <td><input type="text" name="name" id="name" value="<?php echo esc_attr( $guest['name'] ); ?>" class="regular-text" required></td>
             </tr>
             <tr>
+                <th scope="row"><label for="email">البريد الإلكتروني</label></th>
+                <td><input type="email" name="email" id="email" value="<?php echo esc_attr( $guest['email'] ); ?>" class="regular-text"></td>
+            </tr>
+            <tr>
                 <th scope="row"><label for="occasion_id">المناسبة</label></th>
                 <td>
                     <select name="occasion_id" id="occasion_id" required>
@@ -100,6 +113,18 @@ $occasions = $wpdb->get_results( "SELECT id, name FROM $table_occasions ORDER BY
                     </select>
                 </td>
             </tr>
+            <tr>
+                <th scope="row"><label for="plus_one_allowed">السماح بضيف إضافي؟</label></th>
+                <td><input type="checkbox" name="plus_one_allowed" id="plus_one_allowed" value="1" <?php checked( $guest['plus_one_allowed'], 1 ); ?>>
+                    <span class="description">هل يُسمح لهذا المدعو بإحضار ضيف إضافي (+1)؟</span></td>
+            </tr>
+            <?php if ( ! $is_edit_mode ) : ?>
+            <tr>
+                <th scope="row"><label for="send_email_notification">إرسال بريد إلكتروني</label></th>
+                <td><input type="checkbox" name="send_email_notification" id="send_email_notification" value="1" checked>
+                    <span class="description">إرسال بريد إلكتروني بالدعوة إلى المدعو فوراً.</span></td>
+            </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 

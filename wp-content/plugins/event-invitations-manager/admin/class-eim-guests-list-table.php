@@ -78,8 +78,8 @@ class EIM_Guests_List_Table extends WP_List_Table {
                 $invitation_url = home_url( '/invitation/' . $item['unique_code'] . '/' );
                 $input_id = 'invitation-url-' . $item['id'];
                 $html = '<input type="text" id="' . $input_id . '" value="' . esc_url($invitation_url) . '" readonly style="width: 100%;">';
-                $html .= '<button type="button" class="button button-secondary eim-copy-button" data-target="#' . $input_id . '">Copy</button>';
-                $html .= ' <a href="' . esc_url($invitation_url) . '" target="_blank" class="button button-secondary">View</a>';
+                $html .= '<button type="button" class="button button-secondary eim-copy-button" data-target="#' . $input_id . '">نسخ</button>';
+                $html .= ' <a href="' . esc_url($invitation_url) . '" target="_blank" class="button button-secondary">عرض</a>';
                 return $html;
             case 'created_at':
                 return date( 'Y-m-d H:i', strtotime($item[ $column_name ]) );

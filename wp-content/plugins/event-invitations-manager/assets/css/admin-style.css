@@ -1,0 +1,39 @@
+/*
+ * Styles for the Event Invitations Manager admin pages.
+ */
+
+.eim-scan-result {
+    padding: 15px;
+    border-radius: 4px;
+    display: none;
+    text-align: center;
+    font-size: 1.2em;
+    animation-duration: 0.5s;
+    animation-iteration-count: 2;
+}
+
+.eim-scan-result.success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    animation-name: eim-flash-success;
+}
+
+.eim-scan-result.error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    animation-name: eim-flash-error;
+}
+
+@keyframes eim-flash-success {
+    0%   { background-color: #d4edda; }
+    50%  { background-color: #ffffff; }
+    100% { background-color: #d4edda; }
+}
+
+@keyframes eim-flash-error {
+    0%   { background-color: #f8d7da; }
+    50%  { background-color: #ffffff; }
+    100% { background-color: #f8d7da; }
+}

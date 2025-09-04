@@ -34,6 +34,9 @@ $rsvp_done = $guest && $guest->rsvp_status !== 'pending';
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="profile" href="https://gmpg.org/xfn/11">
+    <?php
+        $primary_color = get_option('eim_option_primary_color', '#006A4E');
+    ?>
     <style>
         body { font-family: sans-serif; background-color: #f0f2f5; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
@@ -67,7 +70,11 @@ $rsvp_done = $guest && $guest->rsvp_status !== 'pending';
         <!-- QR Code Placeholder -->
         <div id="qr-code-container">
             <?php if ( $guest->rsvp_status === 'attending' && !empty($guest->qr_code_url) ) : ?>
-                <img src="<?php echo esc_url( $guest->qr_code_url ); ?>" alt="Your QR Code">
+                <a href="<?php echo esc_url( $guest->qr_code_url ); ?>" download="invitation-qr-code.png">
+                    <img src="<?php echo esc_url( $guest->qr_code_url ); ?>" alt="رمز QR الخاص بك">
+                    <br>
+                    <button type="button" style="margin-top:10px;">تحميل الرمز</button>
+                </a>
             <?php endif; ?>
         </div>
 
@@ -75,9 +82,17 @@ $rsvp_done = $guest && $guest->rsvp_status !== 'pending';
         <div class="card">
             <h3>هل ستحضر؟</h3>
             <div class="icon-group" id="rsvp-buttons">
-                <span class="icon <?php if($rsvp_done) echo 'disabled'; ?>" data-rsvp="attending" title="حاضر" style="color: #006A4E; font-size: 2em;">✔️</span>
-                <span class="icon <?php if($rsvp_done) echo 'disabled'; ?>" data-rsvp="not_attending" title="معتذر" style="color: #006A4E; font-size: 2em;">❌</span>
+                <span class="icon <?php if($rsvp_done) echo 'disabled'; ?>" data-rsvp="attending" title="حاضر" style="color: <?php echo esc_attr($primary_color); ?>; font-size: 2em;">✔️</span>
+                <span class="icon <?php if($rsvp_done) echo 'disabled'; ?>" data-rsvp="not_attending" title="معتذر" style="color: <?php echo esc_attr($primary_color); ?>; font-size: 2em;">❌</span>
             </div>
+            <?php if ($guest && $guest->plus_one_allowed && !$rsvp_done) : ?>
+                <div id="plus-one-section" style="margin-top: 15px;">
+                    <label>
+                        <input type="checkbox" id="plus_one_attending" name="plus_one_attending" value="1">
+                        سأحضر معي ضيفاً إضافياً
+                    </label>
+                </div>
+            <?php endif; ?>
             <p id="rsvp-message" style="display:none;"></p>
         </div>
 

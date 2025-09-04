@@ -13,7 +13,7 @@
         <canvas id="scanner-canvas" style="display: none;"></canvas>
     </div>
 
-    <div id="scan-result" style="padding: 15px; border-radius: 4px; display: none;">
+    <div id="scan-result" class="eim-scan-result">
         <h2 id="result-title"></h2>
         <p id="result-message"></p>
     </div>

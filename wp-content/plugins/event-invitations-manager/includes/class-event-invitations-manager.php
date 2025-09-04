@@ -133,6 +133,12 @@ class Event_Invitations_Manager {
 
         // AJAX handler for QR Code Verification
         $this->loader->add_action( 'wp_ajax_eim_verify_guest', $plugin_admin, 'verify_guest_ajax_handler' );
+
+        // Handler for CSV export
+        $this->loader->add_action( 'admin_init', $plugin_admin, 'handle_guest_export' );
+
+        // Register settings
+        $this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
     }
 
     /**

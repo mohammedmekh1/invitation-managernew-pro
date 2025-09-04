@@ -88,12 +88,17 @@ class Event_Invitations_Manager_Admin {
             wp_enqueue_script('jsqr', 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js', array(), '1.4.0', true);
             wp_enqueue_script($this->plugin_name . '-scan', plugin_dir_url( __FILE__ ) . '../assets/js/admin-scan-script.js', array( 'jquery', 'jsqr' ), $this->version, true);
 
-            // Pass a nonce to the script
             wp_localize_script(
                 $this->plugin_name . '-scan',
                 'eim_admin_scan_nonce',
                 wp_create_nonce( 'eim_verify_guest_nonce' )
             );
+        }
+
+        // Enqueue stats scripts for the statistics page
+        if ( $hook === 'invitations_page_event-invitations-manager-statistics' ) {
+            wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', array(), null, true);
+            wp_enqueue_script($this->plugin_name . '-stats', plugin_dir_url( __FILE__ ) . '../assets/js/admin-stats.js', array( 'jquery', 'chartjs' ), $this->version, true);
         }
     }
 
@@ -229,5 +234,129 @@ class Event_Invitations_Manager_Admin {
             'guest_name' => $guest->name,
             'message' => 'Guest checked in successfully!'
         ) );
+    }
+
+    /**
+     * Handles the export of guests to a CSV file.
+     *
+     * @since    1.0.0
+     */
+    public function handle_guest_export() {
+        if ( ! isset( $_GET['action'] ) || $_GET['action'] !== 'export_guests' ) {
+            return;
+        }
+
+        if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'eim_export_guests_nonce' ) ) {
+            wp_die( 'Security check failed.' );
+        }
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( 'You do not have permission to export guests.' );
+        }
+
+        global $wpdb;
+        $table_guests = $wpdb->prefix . 'eim_guests';
+        $table_occasions = $wpdb->prefix . 'eim_occasions';
+
+        $sql = "SELECT g.name, g.email, o.name as occasion_name, g.unique_code, g.rsvp_status, g.plus_one_attending, g.check_in_status FROM {$table_guests} g LEFT JOIN {$table_occasions} o ON g.occasion_id = o.id ORDER BY o.name, g.name";
+        $guests = $wpdb->get_results( $sql, ARRAY_A );
+
+        $filename = 'event-guests-' . date('Y-m-d') . '.csv';
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $output = fopen('php://output', 'w');
+
+        // Add UTF-8 BOM to fix encoding in Excel
+        fputs($output, "\xEF\xBB\xBF");
+
+        $header = array('Guest Name', 'Email', 'Occasion', 'Invitation Link', 'RSVP Status', 'Brought +1', 'Checked In');
+        fputcsv($output, $header);
+
+        foreach ($guests as $guest) {
+            $guest['invitation_link'] = home_url('/invitation/' . $guest['unique_code'] . '/');
+            unset($guest['unique_code']); // No need to show the raw code in export
+            fputcsv($output, $guest);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    /**
+     * Register the settings for the plugin.
+     *
+     * @since    1.0.0
+     */
+    public function register_settings() {
+        register_setting( 'eim_settings_group', 'eim_option_primary_color' );
+        register_setting( 'eim_settings_group', 'eim_option_email_subject' );
+        register_setting( 'eim_settings_group', 'eim_option_email_body' );
+
+        add_settings_section( 'eim_template_section', 'تخصيص قالب الدعوة', array( $this, 'print_template_section_info' ), 'event-invitations-manager-settings' );
+        add_settings_field( 'eim_primary_color', 'اللون الأساسي', array( $this, 'primary_color_callback' ), 'event-invitations-manager-settings', 'eim_template_section' );
+
+        add_settings_section( 'eim_email_section', 'إعدادات البريد الإلكتروني', array( $this, 'print_email_section_info' ), 'event-invitations-manager-settings' );
+        add_settings_field( 'eim_email_subject', 'موضوع البريد الإلكتروني', array( $this, 'email_subject_callback' ), 'event-invitations-manager-settings', 'eim_email_section' );
+        add_settings_field( 'eim_email_body', 'محتوى البريد الإلكتروني', array( $this, 'email_body_callback' ), 'event-invitations-manager-settings', 'eim_email_section' );
+    }
+
+    public function print_template_section_info() {
+        echo 'قم بتخصيص مظهر صفحة الدعوة العامة.';
+    }
+    public function print_email_section_info() {
+        echo 'قم بإعداد قالب البريد الإلكتروني الذي يتم إرساله للمدعوين. يمكنك استخدام الرموز التالية: `[guest_name]`, `[occasion_name]`, `[invitation_link]`';
+    }
+
+    public function primary_color_callback() {
+        printf( '<input type="text" id="eim_option_primary_color" name="eim_option_primary_color" value="%s" />', esc_attr( get_option('eim_option_primary_color', '#006A4E') ) );
+    }
+    public function email_subject_callback() {
+        printf( '<input type="text" id="eim_option_email_subject" name="eim_option_email_subject" value="%s" style="width: 100%%" />', esc_attr( get_option('eim_option_email_subject', 'دعوة لحضور [occasion_name]') ) );
+    }
+    public function email_body_callback() {
+        $content = get_option('eim_option_email_body', "مرحباً [guest_name],\n\nنتشرف بدعوتكم لحضور [occasion_name].\n\nيمكنكم تأكيد حضوركم عبر الرابط التالي:\n[invitation_link]\n\nمع خالص التقدير.");
+        wp_editor( $content, 'eim_option_email_body', array('textarea_name' => 'eim_option_email_body') );
+    }
+
+    /**
+     * Sends the invitation email to a guest.
+     *
+     * @since    1.0.0
+     * @param    int    $guest_id    The ID of the guest to email.
+     */
+    public function send_invitation_email( $guest_id ) {
+        global $wpdb;
+        $table_guests = $wpdb->prefix . 'eim_guests';
+        $table_occasions = $wpdb->prefix . 'eim_occasions';
+
+        $guest = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_guests WHERE id = %d", $guest_id ) );
+
+        if ( ! $guest || empty( $guest->email ) ) {
+            return; // Don't send if no guest or no email
+        }
+
+        $occasion = $wpdb->get_row( $wpdb->prepare( "SELECT name FROM $table_occasions WHERE id = %d", $guest->occasion_id ) );
+        $occasion_name = $occasion ? $occasion->name : '';
+
+        $subject_template = get_option( 'eim_option_email_subject', 'دعوة لحضور [occasion_name]' );
+        $body_template = get_option( 'eim_option_email_body', "مرحباً [guest_name],\n\nنتشرف بدعوتكم لحضور [occasion_name].\n\nيمكنكم تأكيد حضوركم عبر الرابط التالي:\n[invitation_link]\n\nمع خالص التقدير." );
+
+        $invitation_link = home_url('/invitation/' . $guest->unique_code . '/');
+
+        // Replace placeholders
+        $replacements = array(
+            '[guest_name]'      => $guest->name,
+            '[occasion_name]'   => $occasion_name,
+            '[invitation_link]' => $invitation_link,
+        );
+
+        $subject = str_replace( array_keys($replacements), array_values($replacements), $subject_template );
+        $body = nl2br( str_replace( array_keys($replacements), array_values($replacements), $body_template ) );
+
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+
+        wp_mail( $guest->email, $subject, $body, $headers );
     }
 }
